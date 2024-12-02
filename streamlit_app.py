@@ -1,7 +1,8 @@
 import streamlit as st
 import requests
-import joblib
 import json
+import os
+
 
 def download_large_file(url, filename):
     with requests.get(url, stream=True) as r:
@@ -28,3 +29,13 @@ filename = "class_names.json"  # Adjust this to the file type
 download_file(google_drive_url, filename)
 
 st.write("File downloaded successfully!")
+
+file_path = "large_model.h5"  # Adjust this to the correct file name
+
+if os.path.exists(file_path):
+    st.write(f"File {file_path} exists.")
+else:
+    st.write(f"File {file_path} not found.")
+
+st.write("Current directory contents:")
+st.write(os.listdir())
