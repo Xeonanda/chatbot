@@ -30,7 +30,7 @@ download_file(google_drive_url, filename)
 
 st.write("File downloaded successfully!")
 
-file_path = "large_model.h5"  # Adjust this to the correct file name
+file_path = "PlantTomatoDisease.h5"  # Adjust this to the correct file name
 
 if os.path.exists(file_path):
     st.write(f"File {file_path} exists.")
@@ -39,3 +39,5 @@ else:
 
 st.write("Current directory contents:")
 st.write(os.listdir())
+
+st.write(f"File size: {os.path.getsize(file_path) / (1024 ** 2):.2f} MB")
