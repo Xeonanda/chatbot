@@ -1,43 +1,41 @@
 import streamlit as st
 import requests
-import json
 import os
+import joblib
 
-
-def download_large_file(url, filename):
-    with requests.get(url, stream=True) as r:
-        r.raise_for_status()
-        with open(filename, "wb") as f:
-            for chunk in r.iter_content(chunk_size=8192):
-                if chunk:
-                    f.write(chunk)
-
-google_drive_url = "https://drive.google.com/uc?export=download&id=1Xgt5GrsmwoGXYrJSdZ7WKc3ZohaVeorc"
-download_large_file(google_drive_url, "PlantTomatoDisease.h5")
-
-st.write("Large file downloaded")
-
+# Function to download the model if not cached
 @st.cache_data
-def download_file(url, filename):
-    response = requests.get(url)
-    with open(filename, "wb") as f:
-        f.write(response.content)
-    return filename
+def download_model(url, model_path):
+    # Download the file only if it does not exist
+    if not os.path.exists(model_path):
+        st.write("Downloading model...")
+        response = requests.get(url)
+        
+        # Check if the request was successful
+        if response.status_code == 200:
+            with open(model_path, "wb") as f:
+                f.write(response.content)
+            st.success("Model downloaded successfully!")
+        else:
+            st.error("Failed to download model!")
+    return model_path
 
-google_drive_url = "https://drive.google.com/uc?export=download&id=1wlW9UOEqk5F2Psynik5FS3J3zZQV-sMU"
-filename = "class_names.json"  # Adjust this to the file type
-download_file(google_drive_url, filename)
+# Set the URL of your model (e.g., Google Drive or S3 link)
+model_url = "https://drive.google.com/uc?export=download&id=wlW9UOEqk5F2Psynik5FS3J3zZQV-sMU"
 
-st.write("File downloaded successfully!")
+# Specify where you want to store the model in the app's local directory
+model_path = os.path.join("models", "PlantTomatoDisease.h5")
 
-file_path = "PlantTomatoDisease.h5"  # Adjust this to the correct file name
+# Ensure the model directory exists
+if not os.path.exists("models"):
+    os.makedirs("models")
 
-if os.path.exists(file_path):
-    st.write(f"File {file_path} exists.")
+# Download the model if not already cached
+downloaded_model_path = download_model(model_url, model_path)
+
+# Load the model
+if os.path.exists(downloaded_model_path):
+    model = joblib.load(downloaded_model_path)
+    st.write("Model loaded successfully!")
 else:
-    st.write(f"File {file_path} not found.")
-
-st.write("Current directory contents:")
-st.write(os.listdir())
-
-st.write(f"File size: {os.path.getsize(file_path) / (1024 ** 2):.2f} MB")
+    st.error("Model could not be loaded.")
