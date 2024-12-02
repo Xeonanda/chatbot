@@ -21,7 +21,7 @@ def download_model(url, model_path):
     return model_path
 
 # Set the URL of your model (e.g., Google Drive or S3 link)
-model_url = "https://drive.google.com/uc?export=download&id=wlW9UOEqk5F2Psynik5FS3J3zZQV-sMU"
+model_url = "https://drive.google.com/uc?export=download&id=1wlW9UOEqk5F2Psynik5FS3J3zZQV-sMU"
 
 # Specify where you want to store the model in the app's local directory
 model_path = os.path.join("models", "PlantTomatoDisease.h5")
