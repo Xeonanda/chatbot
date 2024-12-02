@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 import os
 from tensorflow.keras.models import load_model
+import h5py
 
 # Function to download the model if not cached
 @st.cache_data
@@ -35,13 +36,20 @@ downloaded_model_path = download_model(model_url, model_path)
 
 # Load the model
 if os.path.exists(downloaded_model_path):
-    model = load_model(downloaded_model_path)
-    st.write("Model loaded successfully!")
-else:
-    st.error("Model could not be loaded.")
-
-if os.path.exists(downloaded_model_path):
     file_size = os.path.getsize(downloaded_model_path)
-    st.write(f"Downloaded model size: {file_size / (1024 * 1024)} MB")
+    if file_size > 0:
+        st.write(f"Model file found, size: {file_size / (1024 * 1024)} MB")
+        model = load_model(downloaded_model_path)
+        st.write("Model loaded successfully!")
+    else:
+        st.error("The model file is empty!")
 else:
-    st.error("Model file not found!")
+    st.error("Model file does not exist!")
+
+try:
+    with h5py.File(downloaded_model_path, 'r') as f:
+        st.write("Model file opened successfully!")
+        # List the contents of the model file
+        st.write(f.keys())
+except Exception as e:
+    st.error(f"Failed to open model file: {e}")
