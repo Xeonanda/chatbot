@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 import os
-import joblib
+from tensorflow.keras.models import load_model
 
 # Function to download the model if not cached
 @st.cache_data
@@ -35,7 +35,13 @@ downloaded_model_path = download_model(model_url, model_path)
 
 # Load the model
 if os.path.exists(downloaded_model_path):
-    model = joblib.load(downloaded_model_path)
+    model = load_model(downloaded_model_path)
     st.write("Model loaded successfully!")
 else:
     st.error("Model could not be loaded.")
+
+if os.path.exists(downloaded_model_path):
+    file_size = os.path.getsize(downloaded_model_path)
+    st.write(f"Downloaded model size: {file_size / (1024 * 1024)} MB")
+else:
+    st.error("Model file not found!")
